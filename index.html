@@ -75,21 +75,18 @@ font-size:40px;
 padding:20px 40px;
 }
 
-/* estrellas */
+/* animaciones */
 
-.estrella{
-position:absolute;
-font-size:35px;
-animation:caer linear forwards;
-}
-
-/* pokebolas */
-
+.estrella,
+.pokebola,
 .pokemon{
 position:absolute;
-font-size:40px;
 animation:caer linear forwards;
 }
+
+.estrella{font-size:35px;}
+.pokebola{font-size:40px;}
+.pokemon{font-size:40px;}
 
 @keyframes caer{
 0%{
@@ -230,9 +227,7 @@ function iniciarJuego(){
 
 nombre=document.getElementById("nombreInput").value
 
-if(nombre==""){
-nombre="amigo"
-}
+if(nombre==""){nombre="amigo"}
 
 document.getElementById("nombreScreen").style.display="none"
 document.getElementById("game").style.display="block"
@@ -269,9 +264,7 @@ while(opciones.length<3){
 
 let n=numeroAleatorio(limite)
 
-if(!opciones.includes(n)){
-opciones.push(n)
-}
+if(!opciones.includes(n)){opciones.push(n)}
 
 }
 
@@ -287,9 +280,7 @@ while(opciones.length<3){
 
 let l=letras[Math.floor(Math.random()*limite)]
 
-if(!opciones.includes(l)){
-opciones.push(l)
-}
+if(!opciones.includes(l)){opciones.push(l)}
 
 }
 
@@ -299,13 +290,9 @@ opciones.sort(()=>Math.random()-0.5)
 
 let botones=document.querySelectorAll(".opciones button")
 
-botones.forEach((b,i)=>{
-b.innerText=opciones[i]
-})
+botones.forEach((b,i)=>{b.innerText=opciones[i]})
 
-setTimeout(()=>{
-hablar(respuestaCorrecta)
-},500)
+setTimeout(()=>{hablar(respuestaCorrecta)},500)
 
 }
 
@@ -326,9 +313,7 @@ mostrarCelebracion()
 
 sonidoAcierto()
 
-setTimeout(()=>{
-siguientePregunta()
-},800)
+setTimeout(()=>{siguientePregunta()},800)
 
 }
 
@@ -340,9 +325,7 @@ sonidoError()
 
 }
 
-function repetir(){
-hablar(respuestaCorrecta)
-}
+function repetir(){hablar(respuestaCorrecta)}
 
 /* celebracion */
 
@@ -355,6 +338,7 @@ document.getElementById("mensajeCelebracion").innerText="¡Felicitaciones "+nomb
 hablar("Felicitaciones "+nombre)
 
 lluviaEstrellas()
+lluviaPokebolas()
 lluviaPokemon()
 
 }
@@ -367,49 +351,65 @@ siguientePregunta()
 
 }
 
-/* estrellas */
+/* lluvias */
 
 function lluviaEstrellas(){
 
-for(let i=0;i<30;i++){
+for(let i=0;i<25;i++){
 
-let estrella=document.createElement("div")
+let e=document.createElement("div")
 
-estrella.className="estrella"
+e.className="estrella"
+e.innerText="⭐"
 
-estrella.innerText="⭐"
+e.style.left=Math.random()*100+"vw"
+e.style.animationDuration=(2+Math.random()*3)+"s"
 
-estrella.style.left=Math.random()*100+"vw"
+document.body.appendChild(e)
 
-estrella.style.animationDuration=(2+Math.random()*3)+"s"
-
-document.body.appendChild(estrella)
-
-setTimeout(()=>{estrella.remove()},5000)
+setTimeout(()=>{e.remove()},5000)
 
 }
 
 }
 
-/* pokebolas */
-
-function lluviaPokemon(){
+function lluviaPokebolas(){
 
 for(let i=0;i<25;i++){
 
-let poke=document.createElement("div")
+let p=document.createElement("div")
 
-poke.className="pokemon"
+p.className="pokebola"
+p.innerText="⚪🔴"
 
-poke.innerText="⚪🔴"
+p.style.left=Math.random()*100+"vw"
+p.style.animationDuration=(2+Math.random()*3)+"s"
 
-poke.style.left=Math.random()*100+"vw"
+document.body.appendChild(p)
 
-poke.style.animationDuration=(2+Math.random()*3)+"s"
+setTimeout(()=>{p.remove()},5000)
 
-document.body.appendChild(poke)
+}
 
-setTimeout(()=>{poke.remove()},5000)
+}
+
+function lluviaPokemon(){
+
+const pokemones=["⚡","🐭","🐉","🔥","🐢","🌿","🦋"]
+
+for(let i=0;i<25;i++){
+
+let p=document.createElement("div")
+
+p.className="pokemon"
+p.innerText=pokemones[Math.floor(Math.random()*pokemones.length)]
+
+p.style.left=Math.random()*100+"vw"
+p.style.animationDuration=(2+Math.random()*3)+"s"
+
+document.body.appendChild(p)
+
+setTimeout(()=>{p.remove()},5000)
 
 }
 
@@ -419,3 +419,4 @@ setTimeout(()=>{poke.remove()},5000)
 
 </body>
 </html>
+
