@@ -5,64 +5,96 @@
 <title>Aprendiendo Jugando</title>
 
 <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(#87CEFA, #ffffff);
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
 
-body{
-font-family: Arial;
-background: linear-gradient(#87CEFA,#ffffff);
-text-align:center;
-margin:0;
-padding:0;
-}
+    h1 {
+        font-size: 50px;
+        margin-top: 30px;
+    }
 
-h1{
-font-size:50px;
-margin-top:30px;
-}
+    button {
+        font-size: 40px;
+        padding: 20px;
+        margin: 20px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
 
-button{
-font-size:40px;
-padding:20px;
-margin:20px;
-border-radius:20px;
-border:none;
-cursor:pointer;
-}
+    button:active {
+        transform: scale(0.95);
+    }
 
-.opciones button{
-width:200px;
-height:120px;
-font-size:60px;
-}
+    .opciones button {
+        width: 200px;
+        height: 120px;
+        font-size: 60px;
+        background-color: #f0f0f0;
+    }
 
-.menu button{
-width:300px;
-}
+    .menu button {
+        width: 300px;
+    }
 
-input{
-font-size:30px;
-padding:10px;
-border-radius:10px;
-border:none;
-}
+    input {
+        font-size: 30px;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+    }
 
-#game{
-display:none;
-}
+    #game, #nombreScreen, #celebracion {
+        display: none;
+    }
 
-#nombreScreen{
-display:none;
-}
+    /* Pantalla de Celebración */
+    #celebracion {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, #FFD700, #FFA500);
+        z-index: 100;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        display: none; /* Se activa por JS */
+    }
 
-.correcto{
-background:#4CAF50;
-color:white;
-}
+    #celebracion h2 {
+        font-size: 60px;
+        color: white;
+        text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    }
 
-.incorrecto{
-background:#FF5252;
-color:white;
-}
+    /* Estrellas animadas */
+    .estrella {
+        position: absolute;
+        top: -50px;
+        font-size: 30px;
+        animation: caer 3s linear forwards;
+    }
 
+    @keyframes caer {
+        to {
+            transform: translateY(110vh) rotate(360deg);
+        }
+    }
+
+    .btn-continuar {
+        background-color: #4CAF50;
+        color: white;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
 </style>
 
 </head>
@@ -72,185 +104,160 @@ color:white;
 <h1>Aprendiendo Jugando</h1>
 
 <div id="menu" class="menu">
-
-<h2>¿Qué quieres aprender hoy?</h2>
-
-<button onclick="seleccionarModo('numeros')">🔢 Números</button>
-
-<button onclick="seleccionarModo('letras')">🔤 Letras</button>
-
+    <h2>¿Qué quieres aprender hoy?</h2>
+    <button onclick="seleccionarModo('numeros')">🔢 Números</button>
+    <button onclick="seleccionarModo('letras')">🔤 Letras</button>
 </div>
-
 
 <div id="nombreScreen">
-
-<h2>¿Cómo te llamas?</h2>
-
-<input id="nombreInput" placeholder="Tu nombre">
-
-<br><br>
-
-<button onclick="iniciarJuego()">Comenzar</button>
-
+    <h2>¿Cómo te llamas?</h2>
+    <input id="nombreInput" placeholder="Tu nombre">
+    <br><br>
+    <button onclick="iniciarJuego()">Comenzar</button>
 </div>
-
 
 <div id="game">
-
-<h2 id="tituloJuego"></h2>
-
-<h3>Escucha y toca la respuesta correcta</h3>
-
-<br>
-
-<div class="opciones">
-<button onclick="respuesta(this)"></button>
-<button onclick="respuesta(this)"></button>
-<button onclick="respuesta(this)"></button>
+    <h2 id="tituloJuego"></h2>
+    <h3>Escucha y toca la respuesta correcta</h3>
+    <br>
+    <div class="opciones">
+        <button onclick="respuesta(this)"></button>
+        <button onclick="respuesta(this)"></button>
+        <button onclick="respuesta(this)"></button>
+    </div>
+    <br>
+    <button onclick="repetir()">🔊 Repetir</button>
 </div>
 
-<br>
-
-<button onclick="repetir()">🔊 Repetir</button>
-
+<div id="celebracion">
+    <h2 id="mensajeCelebracion">¡Increíble!</h2>
+    <button class="btn-continuar" onclick="cerrarCelebracion()">Continuar Jugando ✨</button>
 </div>
-
 
 <script>
+    let modo = "";
+    let nombre = "";
+    let respuestaCorrecta = "";
+    let nivel = 1;
+    let aciertosSeguidos = 0; // Contador de aciertos
 
-let modo = ""
-let nombre = ""
-let respuestaCorrecta = ""
-let nivel = 1
+    const letras = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("");
 
-const letras = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("")
+    function hablar(texto) {
+        let msg = new SpeechSynthesisUtterance(texto);
+        msg.lang = "es-ES";
+        speechSynthesis.speak(msg);
+    }
 
-function hablar(texto){
+    function seleccionarModo(m) {
+        modo = m;
+        document.getElementById("menu").style.display = "none";
+        document.getElementById("nombreScreen").style.display = "block";
+    }
 
-let msg = new SpeechSynthesisUtterance(texto)
-msg.lang = "es-ES"
-speechSynthesis.speak(msg)
+    function iniciarJuego() {
+        nombre = document.getElementById("nombreInput").value.trim();
+        if (nombre == "") { nombre = "amigo"; }
 
-}
+        document.getElementById("nombreScreen").style.display = "none";
+        document.getElementById("game").style.display = "block";
 
-function seleccionarModo(m){
+        if (modo == "numeros") {
+            document.getElementById("tituloJuego").innerText = "Conociendo los números";
+        } else {
+            document.getElementById("tituloJuego").innerText = "Conociendo las letras";
+        }
 
-modo = m
+        siguientePregunta();
+    }
 
-document.getElementById("menu").style.display="none"
-document.getElementById("nombreScreen").style.display="block"
+    function numeroAleatorio(max) {
+        return Math.floor(Math.random() * max) + 1;
+    }
 
-}
+    function siguientePregunta() {
+        let opciones = [];
+        if (modo == "numeros") {
+            let limite = Math.min(10 + nivel, 30);
+            respuestaCorrecta = numeroAleatorio(limite);
+            opciones.push(respuestaCorrecta);
+            while (opciones.length < 3) {
+                let n = numeroAleatorio(limite);
+                if (!opciones.includes(n)) opciones.push(n);
+            }
+        } else {
+            let limite = Math.min(5 + nivel, letras.length);
+            respuestaCorrecta = letras[Math.floor(Math.random() * limite)];
+            opciones.push(respuestaCorrecta);
+            while (opciones.length < 3) {
+                let l = letras[Math.floor(Math.random() * limite)];
+                if (!opciones.includes(l)) opciones.push(l);
+            }
+        }
 
-function iniciarJuego(){
+        opciones.sort(() => Math.random() - 0.5);
+        let botones = document.querySelectorAll(".opciones button");
+        botones.forEach((b, i) => {
+            b.innerText = opciones[i];
+            b.style.backgroundColor = "#f0f0f0"; // Reset color
+        });
 
-nombre = document.getElementById("nombreInput").value
+        setTimeout(() => hablar(respuestaCorrecta), 500);
+    }
 
-if(nombre==""){
-nombre="amigo"
-}
+    function respuesta(btn) {
+        let valor = btn.innerText;
 
-document.getElementById("nombreScreen").style.display="none"
-document.getElementById("game").style.display="block"
+        if (valor == respuestaCorrecta) {
+            aciertosSeguidos++;
+            nivel++;
+            
+            if (aciertosSeguidos % 5 === 0) {
+                mostrarCelebracion();
+            } else {
+                hablar("¡Felicitaciones " + nombre + "!");
+                setTimeout(siguientePregunta, 1500);
+            }
+        } else {
+            hablar("Intentemos otra vez");
+            aciertosSeguidos = 0; // Opcional: reiniciar contador si falla
+        }
+    }
 
-if(modo=="numeros"){
-document.getElementById("tituloJuego").innerText="Conociendo los números"
-}else{
-document.getElementById("tituloJuego").innerText="Conociendo las letras"
-}
+    function mostrarCelebracion() {
+        const pantallaCel = document.getElementById("celebracion");
+        pantallaCel.style.display = "flex";
+        
+        document.getElementById("mensajeCelebracion").innerText = "¡Muy bien " + nombre + "!";
+        hablar("¡Felicitaciones " + nombre + "! Lo has hecho excelente");
 
-siguientePregunta()
+        // Crear estrellas que caen
+        for (let i = 0; i < 50; i++) {
+            crearEstrella();
+        }
+    }
 
-}
+    function crearEstrella() {
+        const estrella = document.createElement("div");
+        estrella.classList.add("estrella");
+        estrella.innerText = "⭐";
+        estrella.style.left = Math.random() * 100 + "vw";
+        estrella.style.animationDuration = (Math.random() * 2 + 2) + "s";
+        estrella.style.opacity = Math.random();
+        document.getElementById("celebracion").appendChild(estrella);
+        
+        // Limpiar la estrella después de la animación
+        setTimeout(() => estrella.remove(), 4000);
+    }
 
-function numeroAleatorio(max){
-return Math.floor(Math.random()*max)+1
-}
+    function cerrarCelebracion() {
+        document.getElementById("celebracion").style.display = "none";
+        siguientePregunta();
+    }
 
-function siguientePregunta(){
-
-let opciones = []
-
-if(modo=="numeros"){
-
-let limite = Math.min(10 + nivel,30)
-
-respuestaCorrecta = numeroAleatorio(limite)
-
-opciones.push(respuestaCorrecta)
-
-while(opciones.length<3){
-
-let n = numeroAleatorio(limite)
-
-if(!opciones.includes(n)){
-opciones.push(n)
-}
-
-}
-
-}else{
-
-let limite = Math.min(5+nivel,letras.length)
-
-respuestaCorrecta = letras[Math.floor(Math.random()*limite)]
-
-opciones.push(respuestaCorrecta)
-
-while(opciones.length<3){
-
-let l = letras[Math.floor(Math.random()*limite)]
-
-if(!opciones.includes(l)){
-opciones.push(l)
-}
-
-}
-
-}
-
-opciones.sort(()=>Math.random()-0.5)
-
-let botones = document.querySelectorAll(".opciones button")
-
-botones.forEach((b,i)=>{
-
-b.innerText = opciones[i]
-
-})
-
-setTimeout(()=>{
-hablar(respuestaCorrecta)
-},500)
-
-}
-
-function respuesta(btn){
-
-let valor = btn.innerText
-
-if(valor == respuestaCorrecta){
-
-hablar("¡Felicitaciones "+nombre+"!")
-
-nivel++
-
-setTimeout(()=>{
-siguientePregunta()
-},1500)
-
-}else{
-
-hablar("Intentemos otra vez")
-
-}
-
-}
-
-function repetir(){
-hablar(respuestaCorrecta)
-}
-
+    function repetir() {
+        hablar(respuestaCorrecta);
+    }
 </script>
 
 </body>
