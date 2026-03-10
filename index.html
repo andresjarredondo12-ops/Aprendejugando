@@ -49,7 +49,7 @@ border:none;
 #game{display:none;}
 #nombreScreen{display:none;}
 
-/* PANTALLA CELEBRACION */
+/* pantalla dorada */
 
 #celebracion{
 display:none;
@@ -84,11 +84,21 @@ z-index:5;
 position:absolute;
 top:-50px;
 animation:caer linear forwards;
+pointer-events:none;
 }
 
 @keyframes caer{
-0%{transform:translateY(-50px);opacity:1;}
-100%{transform:translateY(110vh);opacity:0;}
+
+0%{
+transform:translateY(-50px);
+opacity:1;
+}
+
+100%{
+transform:translateY(110vh);
+opacity:0;
+}
+
 }
 
 </style>
@@ -157,8 +167,6 @@ let aciertos=0
 
 const letras="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("")
 
-/* VOZ */
-
 function hablar(texto){
 
 let msg=new SpeechSynthesisUtterance(texto)
@@ -168,7 +176,7 @@ speechSynthesis.speak(msg)
 
 }
 
-/* SONIDOS */
+/* sonidos */
 
 const audioCtx=new (window.AudioContext||window.webkitAudioContext)()
 
@@ -238,7 +246,7 @@ siguientePregunta()
 
 }
 
-/* JUEGO */
+/* juego */
 
 function numeroAleatorio(max){
 return Math.floor(Math.random()*max)+1
@@ -335,8 +343,8 @@ document.getElementById("mensajeCelebracion").innerText="¡Felicitaciones "+nomb
 
 hablar("Felicitaciones "+nombre)
 
-lluviaObjetos("⭐",30)
-lluviaObjetos("⚪🔴",30)
+lluviaEstrellas()
+lluviaPokebolas()
 lluviaPokemon()
 
 }
@@ -351,7 +359,7 @@ siguientePregunta()
 
 /* LLUVIAS */
 
-function lluviaObjetos(icono,cantidad){
+function crearObjeto(icono,cantidad){
 
 let contenedor=document.getElementById("celebracion")
 
@@ -362,38 +370,46 @@ let obj=document.createElement("div")
 obj.className="caida"
 obj.innerText=icono
 
-obj.style.left=Math.random()*100+"vw"
-obj.style.fontSize=(30+Math.random()*20)+"px"
-obj.style.animationDuration=(2+Math.random()*3)+"s"
+obj.style.left=Math.random()*100+"%"
+obj.style.fontSize=(30+Math.random()*30)+"px"
+obj.style.animationDuration=(3+Math.random()*3)+"s"
 
 contenedor.appendChild(obj)
 
-setTimeout(()=>{obj.remove()},5000)
+setTimeout(()=>{obj.remove()},6000)
 
 }
 
+}
+
+function lluviaEstrellas(){
+crearObjeto("⭐",25)
+}
+
+function lluviaPokebolas(){
+crearObjeto("⚪🔴",25)
 }
 
 function lluviaPokemon(){
 
-const pokemones=["⚡","🐭","🐉","🔥","🐢","🌿","🦋"]
+const pokemones=["⚡","🐭","🐉","🔥","🐢","🌿"]
 
 let contenedor=document.getElementById("celebracion")
 
-for(let i=0;i<30;i++){
+for(let i=0;i<25;i++){
 
 let p=document.createElement("div")
 
 p.className="caida"
 p.innerText=pokemones[Math.floor(Math.random()*pokemones.length)]
 
-p.style.left=Math.random()*100+"vw"
-p.style.fontSize=(35+Math.random()*20)+"px"
-p.style.animationDuration=(2+Math.random()*3)+"s"
+p.style.left=Math.random()*100+"%"
+p.style.fontSize=(35+Math.random()*30)+"px"
+p.style.animationDuration=(3+Math.random()*3)+"s"
 
 contenedor.appendChild(p)
 
-setTimeout(()=>{p.remove()},5000)
+setTimeout(()=>{p.remove()},6000)
 
 }
 
