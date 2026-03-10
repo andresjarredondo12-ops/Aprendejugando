@@ -12,7 +12,7 @@ background: linear-gradient(#87CEFA,#ffffff);
 text-align:center;
 margin:0;
 padding:0;
-overflow-x:hidden;
+overflow:hidden;
 }
 
 h1{
@@ -54,7 +54,7 @@ display:none;
 display:none;
 }
 
-/* PANTALLA CELEBRACION */
+/* pantalla dorada */
 
 #celebracion{
 display:none;
@@ -63,7 +63,7 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:linear-gradient(#FFD700,#FFF3A0);
+background:linear-gradient(#FFD700,#FFF4B5);
 z-index:999;
 align-items:center;
 justify-content:center;
@@ -80,7 +80,7 @@ font-size:40px;
 padding:20px 40px;
 }
 
-/* ESTRELLAS */
+/* estrellas */
 
 .estrella{
 position:absolute;
@@ -89,18 +89,11 @@ animation:caer linear forwards;
 }
 
 @keyframes caer{
-0%{
-transform:translateY(-50px);
-opacity:1;
-}
-100%{
-transform:translateY(100vh);
-opacity:0;
-}
+0%{transform:translateY(-50px);opacity:1;}
+100%{transform:translateY(100vh);opacity:0;}
 }
 
 </style>
-
 </head>
 
 <body>
@@ -148,6 +141,8 @@ opacity:0;
 
 </div>
 
+<!-- CELEBRACION -->
+
 <div id="celebracion">
 
 <h2 id="mensajeCelebracion"></h2>
@@ -166,7 +161,7 @@ let aciertos=0
 
 const letras="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("")
 
-/* VOZ */
+/* voz */
 
 function hablar(texto){
 let msg=new SpeechSynthesisUtterance(texto)
@@ -175,7 +170,7 @@ speechSynthesis.cancel()
 speechSynthesis.speak(msg)
 }
 
-/* SONIDOS */
+/* sonidos */
 
 const audioCtx=new (window.AudioContext||window.webkitAudioContext)()
 
@@ -185,10 +180,10 @@ let osc=audioCtx.createOscillator()
 let gain=audioCtx.createGain()
 
 osc.type="sine"
-osc.frequency.setValueAtTime(700,audioCtx.currentTime)
-osc.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+0.2)
+osc.frequency.setValueAtTime(600,audioCtx.currentTime)
+osc.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+0.25)
 
-gain.gain.setValueAtTime(0.3,audioCtx.currentTime)
+gain.gain.value=0.3
 
 osc.connect(gain)
 gain.connect(audioCtx.destination)
@@ -204,9 +199,8 @@ let osc=audioCtx.createOscillator()
 let gain=audioCtx.createGain()
 
 osc.type="square"
-osc.frequency.setValueAtTime(200,audioCtx.currentTime)
-
-gain.gain.setValueAtTime(0.3,audioCtx.currentTime)
+osc.frequency.value=200
+gain.gain.value=0.3
 
 osc.connect(gain)
 gain.connect(audioCtx.destination)
@@ -216,7 +210,7 @@ osc.stop(audioCtx.currentTime+0.3)
 
 }
 
-/* MENU */
+/* menu */
 
 function seleccionarModo(m){
 
@@ -248,7 +242,7 @@ siguientePregunta()
 
 }
 
-/* JUEGO */
+/* juego */
 
 function numeroAleatorio(max){
 return Math.floor(Math.random()*max)+1
@@ -319,6 +313,8 @@ if(valor==respuestaCorrecta){
 aciertos++
 nivel++
 
+/* CELEBRACION SOLO CADA 5 */
+
 if(aciertos%5===0){
 
 mostrarCelebracion()
@@ -345,13 +341,11 @@ function repetir(){
 hablar(respuestaCorrecta)
 }
 
-/* CELEBRACION */
+/* celebracion */
 
 function mostrarCelebracion(){
 
-let pantalla=document.getElementById("celebracion")
-
-pantalla.style.display="flex"
+document.getElementById("celebracion").style.display="flex"
 
 document.getElementById("mensajeCelebracion").innerText="¡Felicitaciones "+nombre+"!"
 
@@ -369,7 +363,7 @@ siguientePregunta()
 
 }
 
-/* ESTRELLAS */
+/* estrellas */
 
 function lluviaEstrellas(){
 
