@@ -54,16 +54,6 @@ display:none;
 display:none;
 }
 
-.correcto{
-background:#4CAF50;
-color:white;
-}
-
-.incorrecto{
-background:#FF5252;
-color:white;
-}
-
 /* pantalla dorada */
 
 #celebracion{
@@ -73,15 +63,17 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:linear-gradient(#FFD700,#FFF8DC);
+background:linear-gradient(#FFD700,#FFF4B5);
 z-index:999;
+display:flex;
 align-items:center;
 justify-content:center;
 flex-direction:column;
 }
 
 #celebracion h2{
-font-size:60px;
+font-size:70px;
+color:#8B7500;
 }
 
 #continuarBtn{
@@ -93,8 +85,8 @@ padding:20px 40px;
 
 .estrella{
 position:absolute;
-font-size:30px;
-animation:caer 3s linear forwards;
+font-size:35px;
+animation:caer linear forwards;
 }
 
 @keyframes caer{
@@ -121,7 +113,6 @@ opacity:0;
 <h2>¿Qué quieres aprender hoy?</h2>
 
 <button onclick="seleccionarModo('numeros')">🔢 Números</button>
-
 <button onclick="seleccionarModo('letras')">🔤 Letras</button>
 
 </div>
@@ -158,8 +149,6 @@ opacity:0;
 
 </div>
 
-<!-- pantalla de celebración -->
-
 <div id="celebracion">
 
 <h2 id="mensajeCelebracion"></h2>
@@ -182,6 +171,7 @@ function hablar(texto){
 
 let msg = new SpeechSynthesisUtterance(texto)
 msg.lang = "es-ES"
+speechSynthesis.cancel()
 speechSynthesis.speak(msg)
 
 }
@@ -291,11 +281,9 @@ mostrarCelebracion()
 
 }else{
 
-hablar("¡Muy bien "+nombre+"!")
-
 setTimeout(()=>{
 siguientePregunta()
-},1500)
+},1000)
 
 }
 
@@ -315,9 +303,8 @@ hablar(respuestaCorrecta)
 
 function mostrarCelebracion(){
 
-document.getElementById("celebracion").style.display="flex"
-
 document.getElementById("mensajeCelebracion").innerText="¡Felicitaciones "+nombre+"!"
+document.getElementById("celebracion").style.display="flex"
 
 hablar("Felicitaciones " + nombre)
 
