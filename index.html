@@ -46,13 +46,8 @@ border-radius:10px;
 border:none;
 }
 
-#game{
-display:none;
-}
-
-#nombreScreen{
-display:none;
-}
+#game{display:none;}
+#nombreScreen{display:none;}
 
 /* pantalla dorada */
 
@@ -88,9 +83,23 @@ font-size:35px;
 animation:caer linear forwards;
 }
 
+/* pokebolas */
+
+.pokemon{
+position:absolute;
+font-size:40px;
+animation:caer linear forwards;
+}
+
 @keyframes caer{
-0%{transform:translateY(-50px);opacity:1;}
-100%{transform:translateY(100vh);opacity:0;}
+0%{
+transform:translateY(-50px);
+opacity:1;
+}
+100%{
+transform:translateY(100vh);
+opacity:0;
+}
 }
 
 </style>
@@ -141,8 +150,6 @@ animation:caer linear forwards;
 
 </div>
 
-<!-- CELEBRACION -->
-
 <div id="celebracion">
 
 <h2 id="mensajeCelebracion"></h2>
@@ -160,8 +167,6 @@ let nivel=1
 let aciertos=0
 
 const letras="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("")
-
-/* voz */
 
 function hablar(texto){
 let msg=new SpeechSynthesisUtterance(texto)
@@ -313,8 +318,6 @@ if(valor==respuestaCorrecta){
 aciertos++
 nivel++
 
-/* CELEBRACION SOLO CADA 5 */
-
 if(aciertos%5===0){
 
 mostrarCelebracion()
@@ -352,6 +355,7 @@ document.getElementById("mensajeCelebracion").innerText="¡Felicitaciones "+nomb
 hablar("Felicitaciones "+nombre)
 
 lluviaEstrellas()
+lluviaPokemon()
 
 }
 
@@ -367,7 +371,7 @@ siguientePregunta()
 
 function lluviaEstrellas(){
 
-for(let i=0;i<40;i++){
+for(let i=0;i<30;i++){
 
 let estrella=document.createElement("div")
 
@@ -381,9 +385,31 @@ estrella.style.animationDuration=(2+Math.random()*3)+"s"
 
 document.body.appendChild(estrella)
 
-setTimeout(()=>{
-estrella.remove()
-},5000)
+setTimeout(()=>{estrella.remove()},5000)
+
+}
+
+}
+
+/* pokebolas */
+
+function lluviaPokemon(){
+
+for(let i=0;i<25;i++){
+
+let poke=document.createElement("div")
+
+poke.className="pokemon"
+
+poke.innerText="⚪🔴"
+
+poke.style.left=Math.random()*100+"vw"
+
+poke.style.animationDuration=(2+Math.random()*3)+"s"
+
+document.body.appendChild(poke)
+
+setTimeout(()=>{poke.remove()},5000)
 
 }
 
