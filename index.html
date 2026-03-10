@@ -7,8 +7,8 @@
 <style>
 
 body{
-font-family: Arial;
-background: linear-gradient(#87CEFA,#ffffff);
+font-family:Arial;
+background:linear-gradient(#87CEFA,#ffffff);
 text-align:center;
 margin:0;
 padding:0;
@@ -49,7 +49,7 @@ border:none;
 #game{display:none;}
 #nombreScreen{display:none;}
 
-/* pantalla dorada */
+/* PANTALLA CELEBRACION */
 
 #celebracion{
 display:none;
@@ -63,40 +63,32 @@ z-index:999;
 align-items:center;
 justify-content:center;
 flex-direction:column;
+overflow:hidden;
 }
 
 #celebracion h2{
 font-size:70px;
 color:#8B7500;
+z-index:5;
 }
 
 #continuarBtn{
 font-size:40px;
 padding:20px 40px;
+z-index:5;
 }
 
-/* animaciones */
+/* objetos que caen */
 
-.estrella,
-.pokebola,
-.pokemon{
+.caida{
 position:absolute;
+top:-50px;
 animation:caer linear forwards;
 }
 
-.estrella{font-size:35px;}
-.pokebola{font-size:40px;}
-.pokemon{font-size:40px;}
-
 @keyframes caer{
-0%{
-transform:translateY(-50px);
-opacity:1;
-}
-100%{
-transform:translateY(100vh);
-opacity:0;
-}
+0%{transform:translateY(-50px);opacity:1;}
+100%{transform:translateY(110vh);opacity:0;}
 }
 
 </style>
@@ -165,14 +157,18 @@ let aciertos=0
 
 const letras="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("")
 
+/* VOZ */
+
 function hablar(texto){
+
 let msg=new SpeechSynthesisUtterance(texto)
 msg.lang="es-ES"
 speechSynthesis.cancel()
 speechSynthesis.speak(msg)
+
 }
 
-/* sonidos */
+/* SONIDOS */
 
 const audioCtx=new (window.AudioContext||window.webkitAudioContext)()
 
@@ -183,7 +179,7 @@ let gain=audioCtx.createGain()
 
 osc.type="sine"
 osc.frequency.setValueAtTime(600,audioCtx.currentTime)
-osc.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+0.25)
+osc.frequency.exponentialRampToValueAtTime(1200,audioCtx.currentTime+0.2)
 
 gain.gain.value=0.3
 
@@ -191,7 +187,7 @@ osc.connect(gain)
 gain.connect(audioCtx.destination)
 
 osc.start()
-osc.stop(audioCtx.currentTime+0.25)
+osc.stop(audioCtx.currentTime+0.2)
 
 }
 
@@ -212,7 +208,7 @@ osc.stop(audioCtx.currentTime+0.3)
 
 }
 
-/* menu */
+/* MENU */
 
 function seleccionarModo(m){
 
@@ -242,7 +238,7 @@ siguientePregunta()
 
 }
 
-/* juego */
+/* JUEGO */
 
 function numeroAleatorio(max){
 return Math.floor(Math.random()*max)+1
@@ -327,18 +323,20 @@ sonidoError()
 
 function repetir(){hablar(respuestaCorrecta)}
 
-/* celebracion */
+/* CELEBRACION */
 
 function mostrarCelebracion(){
 
-document.getElementById("celebracion").style.display="flex"
+let pantalla=document.getElementById("celebracion")
+
+pantalla.style.display="flex"
 
 document.getElementById("mensajeCelebracion").innerText="¡Felicitaciones "+nombre+"!"
 
 hablar("Felicitaciones "+nombre)
 
-lluviaEstrellas()
-lluviaPokebolas()
+lluviaObjetos("⭐",30)
+lluviaObjetos("⚪🔴",30)
 lluviaPokemon()
 
 }
@@ -351,43 +349,26 @@ siguientePregunta()
 
 }
 
-/* lluvias */
+/* LLUVIAS */
 
-function lluviaEstrellas(){
+function lluviaObjetos(icono,cantidad){
 
-for(let i=0;i<25;i++){
+let contenedor=document.getElementById("celebracion")
 
-let e=document.createElement("div")
+for(let i=0;i<cantidad;i++){
 
-e.className="estrella"
-e.innerText="⭐"
+let obj=document.createElement("div")
 
-e.style.left=Math.random()*100+"vw"
-e.style.animationDuration=(2+Math.random()*3)+"s"
+obj.className="caida"
+obj.innerText=icono
 
-document.body.appendChild(e)
+obj.style.left=Math.random()*100+"vw"
+obj.style.fontSize=(30+Math.random()*20)+"px"
+obj.style.animationDuration=(2+Math.random()*3)+"s"
 
-setTimeout(()=>{e.remove()},5000)
+contenedor.appendChild(obj)
 
-}
-
-}
-
-function lluviaPokebolas(){
-
-for(let i=0;i<25;i++){
-
-let p=document.createElement("div")
-
-p.className="pokebola"
-p.innerText="⚪🔴"
-
-p.style.left=Math.random()*100+"vw"
-p.style.animationDuration=(2+Math.random()*3)+"s"
-
-document.body.appendChild(p)
-
-setTimeout(()=>{p.remove()},5000)
+setTimeout(()=>{obj.remove()},5000)
 
 }
 
@@ -397,17 +378,20 @@ function lluviaPokemon(){
 
 const pokemones=["⚡","🐭","🐉","🔥","🐢","🌿","🦋"]
 
-for(let i=0;i<25;i++){
+let contenedor=document.getElementById("celebracion")
+
+for(let i=0;i<30;i++){
 
 let p=document.createElement("div")
 
-p.className="pokemon"
+p.className="caida"
 p.innerText=pokemones[Math.floor(Math.random()*pokemones.length)]
 
 p.style.left=Math.random()*100+"vw"
+p.style.fontSize=(35+Math.random()*20)+"px"
 p.style.animationDuration=(2+Math.random()*3)+"s"
 
-document.body.appendChild(p)
+contenedor.appendChild(p)
 
 setTimeout(()=>{p.remove()},5000)
 
@@ -419,4 +403,3 @@ setTimeout(()=>{p.remove()},5000)
 
 </body>
 </html>
-
